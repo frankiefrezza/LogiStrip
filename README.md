@@ -1,0 +1,2 @@
+# LogiStrip
+Personal project
