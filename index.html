@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="LogiStrip">
+
+    <title>LogiStrip v2.6</title>
+    
+    <style>
+        :root {
+            --bg-deep: #0a0f1d;
+            --bg-card: #161f33;
+            --accent-primary: #3b82f6; 
+            --accent-success: #34d399; 
+            --text-head: #ffffff;
+            --text-body: #94a3b8;
+            --output-blue: #60a5fa; 
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-head);
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            margin: 0;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 750px;
+        }
+
+        h1 {
+            text-align: center;
+            letter-spacing: 3px;
+            margin-bottom: 40px;
+            font-weight: 900;
+            font-size: 42px;
+            text-transform: uppercase;
+            /* Blue-to-Green Gradient from your Icon Design */
+            background: linear-gradient(135deg, #60a5fa 0%, #34d399 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0px 4px 10px rgba(52, 211, 153, 0.2));
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 11px;
+            color: var(--text-body);
+            text-transform: uppercase;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 130px;
+            background-color: var(--bg-card);
+            color: #ffffff;
+            border: 1px solid #2d3a54;
+            border-radius: 12px;
+            padding: 15px;
+            font-size: 14px;
+            box-sizing: border-box;
+            resize: vertical;
+            margin-bottom: 25px;
+            outline: none;
+            font-family: inherit;
+        }
+
+        textarea:focus { border-color: var(--accent-primary); }
+
+        #formattedOutput {
+            width: 100%;
+            min-height: 200px;
+            background-color: #050810;
+            border: 1px solid #2d3a54;
+            border-radius: 12px;
+            padding: 20px;
+            white-space: pre-wrap; 
+            box-sizing: border-box;
+            margin-bottom: 25px;
+            color: var(--output-blue); 
+            font-family: inherit;
+            line-height: 1.6;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+        }
+
+        button {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 800;
+            font-size: 14px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .btn-copy { 
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: #ffffff;
+        }
+
+        .btn-copy.success {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+        }
+        
+        .btn-clear { 
+            background-color: #1e293b; 
+            color: var(--text-body); 
+            border: 1px solid #334155;
+        }
+
+        button:hover { 
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>LogiStrip</h1>
+
+        <label>Input Data</label>
+        <textarea id="rawInput" autofocus placeholder="Paste raw Sylectus data here..."></textarea>
+
+        <div class="output-container">
+            <label>Cleaned Note</label>
+            <div id="formattedOutput">Ready...</div>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn-clear" onclick="clearAll()">Clear All</button>
+            <button class="btn-copy" id="copyBtn" onclick="copyToClipboard()">Copy Text</button>
+        </div>
+    </div>
+
+    <script>
+        const inputArea = document.getElementById('rawInput');
+        const outputArea = document.getElementById('formattedOutput');
+        const copyBtn = document.getElementById('copyBtn');
+
+        inputArea.addEventListener('input', processData);
+
+        function processData() {
+            const rawText = inputArea.value.trim();
+            if (rawText === "") {
+                outputArea.innerText = "Ready...";
+                return;
+            }
+
+            let lines = [];
+            rawText.split('\n').forEach(line => {
+                let parts = line.split(/\t|\s{4,}/).map(p => p.trim()).filter(p => p !== "");
+                lines.push(...parts);
+            });
+
+            const locPattern = /[A-Z\s\.]+,\s[A-Z]{2}\s\d{5}/;
+            let origin = "Origin Not Found", puTime = "TBD", destination = "Destination Not Found", delTime = "TBD";
+            let miles = "0", pieces = "0", weight = "0";
+
+            if (locPattern.test(lines[0])) origin = lines[0];
+
+            let destIdx = -1;
+            for (let i = 1; i < lines.length; i++) {
+                if (locPattern.test(lines[i])) {
+                    destination = lines[i];
+                    destIdx = i;
+                    break;
+                }
+            }
+
+            if (destIdx > 1) puTime = lines.slice(1, destIdx).join(' ');
+
+            const allNumbers = lines.filter(l => /^\d+$/.test(l));
+            if (allNumbers.length >= 3) {
+                weight = allNumbers[allNumbers.length - 1];
+                pieces = allNumbers[allNumbers.length - 2];
+                miles = allNumbers[allNumbers.length - 3];
+            }
+
+            if (destIdx !== -1) {
+                const afterDest = lines.slice(destIdx + 1);
+                const datePattern = /\d{2}\/\d{2}\/\d{4}\s\d{2}:\d{2}/;
+                for (let part of afterDest) {
+                    if (datePattern.test(part)) { delTime = part; break; }
+                    if (part.toUpperCase().includes("DIRECT")) { delTime = "Deliver Direct"; break; }
+                }
+            }
+
+            outputArea.innerText = `${origin}\n${puTime}\n\n${destination}\n${delTime}\n\nMILES: ${miles}\nPC/S: ${pieces}\nWT/LBS: ${weight}`.trim();
+        }
+
+        function clearAll() {
+            inputArea.value = '';
+            outputArea.innerText = 'Ready...';
+            inputArea.focus();
+        }
+
+        function copyToClipboard() {
+            const text = outputArea.innerText;
+            if (text === "Ready...") return;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = copyBtn.innerText;
+                copyBtn.innerText = "COPIED!";
+                copyBtn.classList.add('success');
+                
+                setTimeout(() => { 
+                    copyBtn.innerText = originalText;
+                    copyBtn.classList.remove('success');
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
