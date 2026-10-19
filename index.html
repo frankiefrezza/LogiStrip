@@ -3,391 +3,312 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="LogiStrip">
 
-    <title>LogiStrip v2.6 | Cyber Glitch Edition</title>
+    <title>LogiStrip v2.6</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;800&family=Orbitron:wght@700;900&display=swap');
-
         :root {
-            --bg-deep: #020617;
-            --neon-cyan: #00f3ff;
-            --neon-pink: #ff00ea;
-            --neon-purple: #bd00ff;
-            --glass-bg: rgba(10, 15, 30, 0.55);
-            --glass-border: rgba(0, 243, 255, 0.2);
-            --terminal-bg: rgba(2, 6, 23, 0.85);
-            --text-main: #f8fafc;
-            --text-cyan: #67e8f9;
+            --bg-body: #f1f5f9;
+            --bg-card: #ffffff;
+            --bg-input: #f8fafc;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-light: #e2e8f0;
+            --border-focus: #4f46e5;
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --secondary: #ffffff;
+            --secondary-hover: #f8fafc;
+            --success: #10b981;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-lg: 0 10px 25px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+            --focus-ring: rgba(79, 70, 229, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            background-color: var(--bg-deep);
+            background-color: var(--bg-body);
             color: var(--text-main);
             font-family: 'Inter', sans-serif;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            padding: 40px 20px;
-            margin: 0;
-            overflow-x: hidden;
-            position: relative;
+            padding: 24px;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* --- Holographic Grid Background --- */
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background-image: 
-                linear-gradient(rgba(0, 243, 255, 0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 243, 255, 0.05) 1px, transparent 1px);
-            background-size: 40px 40px;
-            background-position: center center;
-            z-index: -2;
-            animation: gridMove 20s linear infinite;
-        }
-
-        @keyframes gridMove {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(40px); }
-        }
-
-        /* --- CRT Scanline Overlay --- */
-        body::after {
-            content: "";
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
-            background-size: 100% 4px;
-            z-index: 999;
-            pointer-events: none;
-        }
-
-        /* --- Animated Background Orbs --- */
-        .bg-shape {
-            position: absolute;
-            filter: blur(90px);
-            opacity: 0.4;
-            z-index: -1;
-            border-radius: 50%;
-            animation: float 15s infinite alternate ease-in-out;
-        }
-
-        .shape-1 { width: 400px; height: 400px; background: var(--neon-purple); top: -10%; left: -5%; }
-        .shape-2 { width: 350px; height: 350px; background: var(--neon-cyan); bottom: -10%; right: -5%; animation-duration: 20s; animation-direction: alternate-reverse; }
-
-        @keyframes float {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(40px, 60px) scale(1.1); }
-        }
-
-        /* --- Glassmorphic Container --- */
         .container {
             width: 100%;
-            max-width: 800px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
+            max-width: 720px;
+            background: var(--bg-card);
             border-radius: 16px;
-            padding: 50px 40px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(0, 243, 255, 0.05);
-            position: relative;
+            padding: 40px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-light);
         }
 
-        /* --- HUD Corner Brackets --- */
-        .hud-bracket {
-            position: absolute;
-            width: 30px;
-            height: 30px;
-            border: 2px solid var(--neon-cyan);
-            opacity: 0.7;
+        /* --- Header --- */
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border-light);
         }
-        .top-left { top: 15px; left: 15px; border-right: none; border-bottom: none; }
-        .top-right { top: 15px; right: 15px; border-left: none; border-bottom: none; }
-        .bottom-left { bottom: 15px; left: 15px; border-right: none; border-top: none; }
-        .bottom-right { bottom: 15px; right: 15px; border-left: none; border-top: none; }
 
-        /* --- Logo Glitch Animation --- */
-        .glitch-wrapper {
-            text-align: center;
-            margin-top: 0;
-            margin-bottom: 40px;
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+        }
+
+        .logo-icon svg {
+            width: 24px;
+            height: 24px;
+            color: white;
         }
 
         h1 {
-            font-family: 'Orbitron', sans-serif;
-            letter-spacing: 6px;
-            font-weight: 900;
-            font-size: 42px;
-            text-transform: uppercase;
-            color: #fff;
-            text-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan);
-            position: relative;
-            display: inline-block;
-            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: var(--text-main);
         }
 
-        h1::before, h1::after {
-            content: attr(data-text);
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: transparent;
+        .version-badge {
+            margin-left: 12px;
+            background: var(--bg-body);
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 20px;
+            border: 1px solid var(--border-light);
         }
 
-        h1::before {
-            left: 3px;
-            text-shadow: -2px 0 var(--neon-pink);
-            clip-path: inset(24% 0 60% 0);
-            animation: glitch-anim-1 2.5s infinite linear alternate-reverse;
-        }
-
-        h1::after {
-            left: -3px;
-            text-shadow: -2px 0 var(--neon-cyan);
-            clip-path: inset(65% 0 10% 0);
-            animation: glitch-anim-2 3s infinite linear alternate-reverse;
-        }
-
-        @keyframes glitch-anim-1 {
-            0% { clip-path: inset(20% 0 80% 0); transform: translate(0); }
-            20% { clip-path: inset(60% 0 10% 0); transform: translate(-3px, 2px); }
-            40% { clip-path: inset(40% 0 50% 0); transform: translate(3px, -2px); }
-            60% { clip-path: inset(80% 0 5% 0); transform: translate(-3px, 1px); }
-            80% { clip-path: inset(10% 0 70% 0); transform: translate(3px, -1px); }
-            100% { clip-path: inset(30% 0 50% 0); transform: translate(0); }
-        }
-
-        @keyframes glitch-anim-2 {
-            0% { clip-path: inset(10% 0 60% 0); transform: translate(0); }
-            20% { clip-path: inset(80% 0 5% 0); transform: translate(3px, -2px); }
-            40% { clip-path: inset(30% 0 20% 0); transform: translate(-3px, 2px); }
-            60% { clip-path: inset(70% 0 10% 0); transform: translate(3px, -1px); }
-            80% { clip-path: inset(20% 0 50% 0); transform: translate(-3px, 1px); }
-            100% { clip-path: inset(50% 0 30% 0); transform: translate(0); }
+        /* --- Form Elements --- */
+        .input-group {
+            margin-bottom: 24px;
         }
 
         label {
-            display: flex;
-            align-items: center;
-            margin-bottom: 12px;
+            display: block;
+            margin-bottom: 8px;
             font-size: 13px;
-            color: var(--neon-cyan);
+            font-weight: 600;
+            color: var(--text-muted);
             text-transform: uppercase;
-            font-weight: 800;
-            letter-spacing: 2px;
-        }
-
-        label::before {
-            content: "";
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            background-color: var(--neon-pink);
-            margin-right: 12px;
-            box-shadow: 0 0 10px var(--neon-pink);
-            transform: rotate(45deg);
-        }
-
-        /* --- Terminal Inputs and Outputs --- */
-        .terminal-wrapper {
-            position: relative;
-            margin-bottom: 35px;
-        }
-
-        .terminal-wrapper::before {
-            content: "";
-            position: absolute;
-            left: 0;
-            top: 0;
-            height: 100%;
-            width: 4px;
-            background: var(--neon-cyan);
-            border-radius: 4px 0 0 4px;
-            box-shadow: 0 0 15px var(--neon-cyan);
-            z-index: 2;
+            letter-spacing: 0.05em;
         }
 
         textarea, #formattedOutput {
             width: 100%;
-            background: var(--terminal-bg);
+            background: var(--bg-input);
             color: var(--text-main);
-            border: 1px solid rgba(0, 243, 255, 0.15);
-            border-radius: 4px;
-            padding: 20px 20px 20px 25px;
-            font-size: 15px;
-            box-sizing: border-box;
+            border: 1px solid var(--border-light);
+            border-radius: 10px;
+            padding: 16px;
+            font-size: 14px;
+            line-height: 1.6;
             outline: none;
-            font-family: 'Fira Code', monospace;
-            font-weight: 400;
-            letter-spacing: 0.5px;
-            transition: all 0.3s ease;
-            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-sm);
         }
 
         textarea {
-            height: 140px;
+            font-family: 'JetBrains Mono', monospace;
+            height: 120px;
             resize: vertical;
         }
 
-        textarea:focus { 
-            border-color: var(--neon-cyan);
-            background: rgba(2, 6, 23, 0.95);
+        textarea:focus {
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 4px var(--focus-ring);
+            background: var(--bg-card);
+        }
+
+        textarea::placeholder {
+            color: #94a3b8;
+            font-family: 'Inter', sans-serif;
         }
 
         #formattedOutput {
-            min-height: 220px;
-            white-space: pre-wrap; 
-            color: var(--text-cyan); 
-            line-height: 1.7;
-            border-left: none;
+            min-height: 200px;
+            font-family: 'JetBrains Mono', monospace;
+            white-space: pre-wrap;
+            background: var(--bg-card);
+            border-left: 4px solid var(--primary);
+            color: var(--text-main);
         }
 
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: var(--bg-deep); }
-        ::-webkit-scrollbar-thumb { background: rgba(0, 243, 255, 0.3); border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--neon-cyan); }
+        #formattedOutput.empty {
+            color: var(--text-muted);
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-left: 1px solid var(--border-light);
+            background: var(--bg-input);
+        }
 
         /* --- Buttons --- */
         .btn-group {
             display: flex;
-            gap: 20px;
+            gap: 16px;
+            margin-top: 32px;
         }
 
         button {
             flex: 1;
-            padding: 16px;
-            border: none;
-            border-radius: 6px;
+            padding: 14px 24px;
+            border-radius: 10px;
             cursor: pointer;
-            font-weight: 700;
-            font-size: 15px;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            transition: all 0.3s ease;
-            font-family: 'Orbitron', sans-serif;
-            position: relative;
-            z-index: 1;
-            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+            font-weight: 600;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            /* Added smooth transition for the transform/scale effect */
+            transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
-        .btn-clear { 
-            background: rgba(255, 0, 234, 0.1); 
-            color: var(--neon-pink); 
-            border-left: 2px solid var(--neon-pink);
-            border-bottom: 2px solid var(--neon-pink);
+        /* The physical pressing effect for all buttons */
+        button:active {
+            transform: scale(0.96) !important;
+        }
+
+        .btn-clear {
+            background: var(--secondary);
+            color: var(--text-main);
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow-sm);
         }
 
         .btn-clear:hover {
-            background: rgba(255, 0, 234, 0.25);
-            box-shadow: 0 0 20px rgba(255, 0, 234, 0.4);
+            background: var(--secondary-hover);
+            border-color: #cbd5e1;
+        }
+        
+        .btn-clear.success {
+            color: var(--success);
+            border-color: var(--success);
+            background: #f0fdf4; /* Light green background */
         }
 
-        .btn-copy { 
-            background: rgba(0, 243, 255, 0.1);
-            color: var(--neon-cyan);
-            border-right: 2px solid var(--neon-cyan);
-            border-top: 2px solid var(--neon-cyan);
+        .btn-copy {
+            background: var(--primary);
+            color: white;
+            border: 1px solid transparent;
+            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.2);
         }
 
         .btn-copy:hover {
-            background: rgba(0, 243, 255, 0.25);
-            box-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
+            background: var(--primary-hover);
+            transform: translateY(-1px);
         }
 
         .btn-copy.success {
-            background: var(--neon-cyan);
-            color: #000;
-            border: none;
-            box-shadow: 0 0 30px var(--neon-cyan);
+            background: var(--success);
+            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);
         }
 
-        /* --- Button Click Glitch Animation --- */
-        .btn-glitching {
-            animation: btnGlitch 0.25s cubic-bezier(.25, .46, .45, .94) both;
-        }
-
-        @keyframes btnGlitch {
-            0% { transform: translate(0); }
-            20% { transform: translate(-4px, 4px) skew(-10deg); filter: hue-rotate(90deg); }
-            40% { transform: translate(4px, -4px) skew(10deg); filter: hue-rotate(-90deg); }
-            60% { transform: translate(-4px, -4px) skew(-10deg); filter: invert(1); }
-            80% { transform: translate(4px, 4px) skew(10deg); filter: hue-rotate(180deg); }
-            100% { transform: translate(0); filter: none; }
+        /* Button Icons */
+        .btn-icon {
+            width: 18px;
+            height: 18px;
         }
 
         /* Mobile Adjustments */
         @media (max-width: 600px) {
-            .container { padding: 30px 20px; }
-            h1 { font-size: 32px; }
-            .btn-group { flex-direction: column; }
+            .container {
+                padding: 24px;
+            }
+            .btn-group {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
 
-    <div class="bg-shape shape-1"></div>
-    <div class="bg-shape shape-2"></div>
-
     <div class="container">
-        <!-- HUD Corners -->
-        <div class="hud-bracket top-left"></div>
-        <div class="hud-bracket top-right"></div>
-        <div class="hud-bracket bottom-left"></div>
-        <div class="hud-bracket bottom-right"></div>
-
-        <div class="glitch-wrapper">
-            <h1 data-text="LogiStrip">LogiStrip</h1>
-        </div>
-
-        <label>Data Uplink</label>
-        <div class="terminal-wrapper">
-            <textarea id="rawInput" autofocus placeholder="Await raw Sylectus data injection..."></textarea>
-        </div>
-
-        <div class="output-container">
-            <label>Decrypted Output</label>
-            <div class="terminal-wrapper">
-                <div id="formattedOutput">System Ready_</div>
+        
+        <div class="header">
+            <div class="logo-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
             </div>
+            <h1>LogiStrip</h1>
+            <span class="version-badge">v2.6</span>
+        </div>
+
+        <div class="input-group">
+            <label for="rawInput">Data Uplink</label>
+            <textarea id="rawInput" autofocus placeholder="Paste raw Sylectus data here..."></textarea>
+        </div>
+
+        <div class="input-group">
+            <label>Decrypted Output</label>
+            <div id="formattedOutput" class="empty">Awaiting data injection...</div>
         </div>
 
         <div class="btn-group">
-            <button class="btn-clear" onclick="clearAll(this)">Purge Data</button>
-            <button class="btn-copy" id="copyBtn" onclick="copyToClipboard(this)">Extract Text</button>
+            <button class="btn-clear" id="clearBtn" onclick="clearAll()">
+                <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+                Clear Data
+            </button>
+            
+            <button class="btn-copy" id="copyBtn" onclick="copyToClipboard()">
+                <svg class="btn-icon copy-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+                Copy to Clipboard
+            </button>
         </div>
+
     </div>
 
     <script>
         const inputArea = document.getElementById('rawInput');
         const outputArea = document.getElementById('formattedOutput');
         const copyBtn = document.getElementById('copyBtn');
+        const clearBtn = document.getElementById('clearBtn');
 
         inputArea.addEventListener('input', processData);
-
-        function triggerButtonGlitch(btn) {
-            btn.classList.add('btn-glitching');
-            setTimeout(() => {
-                btn.classList.remove('btn-glitching');
-            }, 250); // Matches the 0.25s animation duration
-        }
 
         function processData() {
             const rawText = inputArea.value.trim();
             if (rawText === "") {
-                outputArea.innerText = "System Ready_";
+                outputArea.innerText = "Awaiting data injection...";
+                outputArea.classList.add('empty');
                 return;
             }
+
+            outputArea.classList.remove('empty');
 
             let lines = [];
             rawText.split('\n').forEach(line => {
@@ -431,25 +352,49 @@
             outputArea.innerText = `${origin}\n${puTime}\n\n${destination}\n${delTime}\n\nMILES: ${miles}\nPC/S: ${pieces}\nWT/LBS: ${weight}`.trim();
         }
 
-        function clearAll(btn) {
-            triggerButtonGlitch(btn);
+        function clearAll() {
+            // Clear the logic
             inputArea.value = '';
-            outputArea.innerText = 'System Ready_';
+            outputArea.innerText = 'Awaiting data injection...';
+            outputArea.classList.add('empty');
             inputArea.focus();
+
+            // Provide visual feedback for clearing
+            const originalHtml = clearBtn.innerHTML;
+            clearBtn.innerHTML = `
+                <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+                Cleared!
+            `;
+            clearBtn.classList.add('success');
+            
+            // Revert back after 1.5 seconds
+            setTimeout(() => { 
+                clearBtn.innerHTML = originalHtml;
+                clearBtn.classList.remove('success');
+            }, 1500);
         }
 
-        function copyToClipboard(btn) {
-            triggerButtonGlitch(btn);
+        function copyToClipboard() {
             const text = outputArea.innerText;
-            if (text === "System Ready_") return;
+            if (text === "Awaiting data injection...") return;
             
             navigator.clipboard.writeText(text).then(() => {
-                const originalText = copyBtn.innerText;
-                copyBtn.innerText = "DATA EXTRACTED!";
+                const originalHtml = copyBtn.innerHTML;
+                
+                // Change button to success state
+                copyBtn.innerHTML = `
+                    <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                    Copied!
+                `;
                 copyBtn.classList.add('success');
                 
+                // Revert after 2 seconds
                 setTimeout(() => { 
-                    copyBtn.innerText = originalText;
+                    copyBtn.innerHTML = originalHtml;
                     copyBtn.classList.remove('success');
                 }, 2000);
             });
