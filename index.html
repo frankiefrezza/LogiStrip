@@ -27,9 +27,29 @@
             --secondary: #ffffff;
             --secondary-hover: #f8fafc;
             --success: #10b981;
+            --success-bg: #f0fdf4;
             --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
             --shadow-lg: 0 10px 25px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
             --focus-ring: rgba(79, 70, 229, 0.15);
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #0f172a; 
+            --bg-card: #1e293b; 
+            --bg-input: #0f172a; 
+            --text-main: #f8fafc; 
+            --text-muted: #94a3b8; 
+            --border-light: #334155; 
+            --border-focus: #6366f1; 
+            --primary: #6366f1; 
+            --primary-hover: #818cf8; 
+            --secondary: #1e293b; 
+            --secondary-hover: #334155; 
+            --success: #10b981; 
+            --success-bg: rgba(16, 185, 129, 0.1);
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+            --shadow-lg: 0 10px 25px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3);
+            --focus-ring: rgba(99, 102, 241, 0.25);
         }
 
         * {
@@ -48,6 +68,7 @@
             min-height: 100vh;
             padding: 24px;
             -webkit-font-smoothing: antialiased;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         .container {
@@ -58,15 +79,19 @@
             padding: 40px;
             box-shadow: var(--shadow-lg);
             border: 1px solid var(--border-light);
+            transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
         /* --- Header --- */
         .header {
             display: flex;
             align-items: center;
+            justify-content: center;
+            gap: 16px;
             margin-bottom: 32px;
             padding-bottom: 24px;
             border-bottom: 1px solid var(--border-light);
+            transition: border-color 0.3s ease;
         }
 
         .logo-icon {
@@ -77,8 +102,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-right: 16px;
             box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+            transition: background-color 0.3s ease;
         }
 
         .logo-icon svg {
@@ -92,17 +117,6 @@
             font-weight: 700;
             letter-spacing: -0.02em;
             color: var(--text-main);
-        }
-
-        .version-badge {
-            margin-left: 12px;
-            background: var(--bg-body);
-            color: var(--text-muted);
-            font-size: 12px;
-            font-weight: 600;
-            padding: 4px 10px;
-            border-radius: 20px;
-            border: 1px solid var(--border-light);
         }
 
         /* --- Form Elements --- */
@@ -185,7 +199,7 @@
             font-weight: 600;
             font-size: 14px;
             font-family: 'Inter', sans-serif;
-            transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+            transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease, color 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -211,7 +225,7 @@
         .btn-clear.success {
             color: var(--success);
             border-color: var(--success);
-            background: #f0fdf4; 
+            background: var(--success-bg); 
         }
 
         .btn-copy {
@@ -236,6 +250,58 @@
             height: 18px;
         }
 
+        /* --- Footer (Version & Theme) --- */
+        .footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-light);
+            transition: border-color 0.3s ease;
+        }
+
+        .version-badge {
+            background: var(--bg-input);
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle {
+            background: var(--bg-input);
+            border: 1px solid var(--border-light);
+            color: var(--text-muted);
+            cursor: pointer;
+            width: 44px;
+            height: 44px;
+            padding: 0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: none; /* Prevents button from stretching in the flex layout */
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s ease;
+        }
+
+        .theme-toggle:hover {
+            background-color: var(--border-light);
+            color: var(--text-main);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .theme-toggle svg {
+            width: 20px;
+            height: 20px;
+        }
+
         /* Mobile Adjustments */
         @media (max-width: 600px) {
             .container {
@@ -258,7 +324,6 @@
                 </svg>
             </div>
             <h1>LogiStrip</h1>
-            <span class="version-badge">v2.6</span>
         </div>
 
         <div class="input-group">
@@ -287,9 +352,53 @@
             </button>
         </div>
 
+        <div class="footer">
+            <span class="version-badge">v2.6</span>
+            
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Dark Mode" title="Toggle Theme">
+                <!-- Moon Icon -->
+                <svg id="moonIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                </svg>
+                <!-- Sun Icon (Hidden by default) -->
+                <svg id="sunIcon" style="display: none;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+            </button>
+        </div>
+
     </div>
 
     <script>
+        // --- Theme Toggle Logic ---
+        const themeToggleBtn = document.getElementById('themeToggle');
+        const moonIcon = document.getElementById('moonIcon');
+        const sunIcon = document.getElementById('sunIcon');
+
+        // Check for saved theme preference
+        const savedTheme = localStorage.getItem('logistrip_theme');
+        if (savedTheme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            moonIcon.style.display = 'none';
+            sunIcon.style.display = 'block';
+        }
+
+        themeToggleBtn.addEventListener('click', () => {
+            let currentTheme = document.documentElement.getAttribute('data-theme');
+            if (currentTheme === 'dark') {
+                document.documentElement.removeAttribute('data-theme');
+                localStorage.setItem('logistrip_theme', 'light');
+                moonIcon.style.display = 'block';
+                sunIcon.style.display = 'none';
+            } else {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                localStorage.setItem('logistrip_theme', 'dark');
+                moonIcon.style.display = 'none';
+                sunIcon.style.display = 'block';
+            }
+        });
+
+        // --- Data Processing Logic ---
         const inputArea = document.getElementById('rawInput');
         const outputArea = document.getElementById('formattedOutput');
         const copyBtn = document.getElementById('copyBtn');
