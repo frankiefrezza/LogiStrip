@@ -81,43 +81,20 @@
             border: 1px solid var(--border-light);
         }
 
+        /* --- Header --- */
         .header {
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: center;
             margin-bottom: 24px;
             padding-bottom: 20px;
             border-bottom: 1px solid var(--border-light);
         }
 
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .logo-icon {
-            width: 38px;
-            height: 38px;
-            background: var(--primary);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
-        }
-
-        .logo-icon svg {
-            width: 22px;
-            height: 22px;
-            color: white;
-        }
-
-        h1 {
-            font-size: 22px;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            color: var(--text-main);
+        .header-logo {
+            max-width: 280px;
+            height: auto;
+            display: block;
         }
 
         .board-tag {
@@ -270,6 +247,7 @@
             height: 18px;
         }
 
+        /* --- Footer --- */
         .footer {
             display: flex;
             align-items: center;
@@ -315,15 +293,7 @@
 
     <div class="container">
         <div class="header">
-            <div class="brand">
-                <div class="logo-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                </div>
-                <h1>LogiStrip</h1>
-            </div>
-            <span class="shortcut-hint">Cmd/Ctrl + Enter to Copy</span>
+            <img src="logo.png" alt="Conti Trans LogiStrip" class="header-logo">
         </div>
 
         <div class="input-group">
@@ -357,6 +327,9 @@
 
         <div class="footer">
             <span class="version-badge">v3.1</span>
+            
+            <span class="shortcut-hint">Cmd/Ctrl + Enter to Copy</span>
+            
             <button id="themeToggle" class="theme-toggle" aria-label="Toggle Dark Mode" title="Toggle Theme">
                 <svg id="moonIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
@@ -446,21 +419,18 @@
         function parseArcBest(text) {
             const lines = text.split('\n').map(l => l.trim()).filter(l => l !== "");
 
-            // Locations with ZIP codes in Route section
             const zipLocPattern = /^[A-Za-z\s\.\-']+\s*,\s*[A-Z]{2}\s*\d{5}$/;
             let zipLocs = lines.filter(l => zipLocPattern.test(l));
 
             let origin = zipLocs[0] || "Origin Not Found";
             let destination = zipLocs[1] || "Destination Not Found";
 
-            // Pickup & Delivery Timestamps
             const dateTimePattern = /\d{2}-\d{2}-\d{4}\s+\d{2}:\d{2}(?:\s*\([A-Z]+\))?/;
             let dateMatches = text.match(new RegExp(dateTimePattern, 'g')) || [];
 
             let puTime = dateMatches[0] ? formatDate(dateMatches[0]) : "TBD";
             let delTime = dateMatches[1] ? formatDate(dateMatches[1]) : "TBD";
 
-            // Cargo Details
             let pieces = "1";
             let unitsMatch = text.match(/Shipment Units\s*\n\s*([^\n]+)/i) || text.match(/(\d+\s*(?:Pallets|Plts|Pcs|Skids))/i);
             if (unitsMatch) pieces = unitsMatch[1].trim();
@@ -487,7 +457,6 @@
             let comMatch = text.match(/Commodity:\s*([^\n]+)/i);
             if (comMatch) commodity = comMatch[1].trim();
 
-            // Construct Output
             const payload = [
                 `[PICKUP]`,
                 `${origin}`,
