@@ -319,7 +319,7 @@
         <div class="btn-group">
             <button class="btn-clear" id="pasteBtn" onclick="pasteFromClipboard()">
                 <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
                 Paste
             </button>
@@ -505,7 +505,8 @@
             });
 
             const locPattern = /^[A-Z\s\.\-']+,\s*[A-Z]{2}\s*\d{5}$/i;
-            const datePattern = /^\d{1,2}\/\d{1,2}\/\d{4}\s+\d{1,2}:\d{2}$/;
+            // Added explicit support for ASAP, DIRECT, and TBD as valid time tokens
+            const isTime = (t) => /^\d{1,2}\/\d{1,2}\/\d{4}\s+\d{1,2}:\d{2}$/.test(t) || /^(ASAP|DIRECT|TBD)$/i.test(t);
 
             let origin = "Origin Not Found";
             let destination = "Destination Not Found";
@@ -521,14 +522,14 @@
 
             if (locIndices.length >= 1) {
                 origin = tokens[locIndices[0]];
-                if (locIndices[0] + 1 < tokens.length && datePattern.test(tokens[locIndices[0] + 1])) {
+                if (locIndices[0] + 1 < tokens.length && isTime(tokens[locIndices[0] + 1])) {
                     puTime = formatDate(tokens[locIndices[0] + 1]);
                 }
             }
 
             if (locIndices.length >= 2) {
                 destination = tokens[locIndices[1]];
-                if (locIndices[1] + 1 < tokens.length && datePattern.test(tokens[locIndices[1] + 1])) {
+                if (locIndices[1] + 1 < tokens.length && isTime(tokens[locIndices[1] + 1])) {
                     delTime = formatDate(tokens[locIndices[1] + 1]);
                 }
             }
