@@ -52,7 +52,6 @@
             --focus-ring: rgba(99, 102, 241, 0.25);
         }
 
-        /* Target Logo Visibility Specifically in Dark Mode */
         [data-theme="dark"] .header-logo {
             filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.95)) 
                     drop-shadow(0 0 8px rgba(255, 255, 255, 0.35)) 
@@ -336,7 +335,7 @@
         <div class="footer">
             <span class="version-badge">v3.1</span>
             
-            <span class="shortcut-hint">Cmd/Ctrl + Enter to Copy</span>
+            <span class="shortcut-hint">Cmd/Ctrl + \ (Paste) | Cmd/Ctrl + Enter (Copy)</span>
             
             <button id="themeToggle" class="theme-toggle" aria-label="Toggle Dark Mode" title="Toggle Theme">
                 <svg id="moonIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -384,7 +383,16 @@
 
         inputArea.addEventListener('input', processData);
 
+        // Global Keyboard Shortcuts
         document.addEventListener('keydown', (e) => {
+            // Cmd/Ctrl + \ => Paste from Clipboard
+            if ((e.metaKey || e.ctrlKey) && e.key === '\\') {
+                e.preventDefault();
+                pasteFromClipboard();
+                return;
+            }
+
+            // Cmd/Ctrl + Enter => Copy & Clear
             if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
                 e.preventDefault();
                 copyAndClear();
@@ -440,7 +448,7 @@
             let delTime = dateMatches[1] ? formatDate(dateMatches[1]) : "TBD";
 
             let pieces = "1";
-            let unitsMatch = text.match(/Shipment Units\s*\n\s*([^\n]+)/i) || text.match(/(\d+\s*(?:Pallets|Plts|Pcs|Skids))/i);
+            let unitsMatch = text.match(/Shipment Units\s*\n\s*([^\n]+)/i) || text.match(/(\d+\s*(?:Pallets|Plts|Pcs|Skids|Boxes))/i);
             if (unitsMatch) pieces = unitsMatch[1].trim();
 
             let weight = "0";
@@ -448,13 +456,15 @@
             if (wtMatch) weight = wtMatch[1].trim();
 
             let miles = "0";
-            const routeIdx = lines.findIndex(l => l === "Route");
-            if (routeIdx !== -1 && routeIdx + 3 < lines.length) {
-                let mileCandidate = lines[routeIdx + 3];
-                if (/^\d+$/.test(mileCandidate)) miles = mileCandidate;
-            } else {
-                let mMatch = text.match(/\b(\d{2,4})\b(?!\s*Pounds)/);
-                if (mMatch) miles = mMatch[1];
+            // 1. Look for the miles listed just above "Shipment Requirements"
+            let milesMatch = text.match(/([\d,]+)\s+Shipment Requirements/i);
+            // 2. Fallback: look for explicit "Miles 455" at the bottom
+            let explicitMilesMatch = text.match(/Miles[\t:]\s*([\d,]+)/i);
+            
+            if (milesMatch) {
+                miles = milesMatch[1];
+            } else if (explicitMilesMatch) {
+                miles = explicitMilesMatch[1];
             }
 
             let dims = null;
