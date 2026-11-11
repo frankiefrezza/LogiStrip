@@ -52,6 +52,13 @@
             --focus-ring: rgba(99, 102, 241, 0.25);
         }
 
+        /* Target Logo Visibility Specifically in Dark Mode */
+        [data-theme="dark"] .header-logo {
+            filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.95)) 
+                    drop-shadow(0 0 8px rgba(255, 255, 255, 0.35)) 
+                    brightness(1.15);
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
@@ -95,6 +102,7 @@
             max-width: 280px;
             height: auto;
             display: block;
+            transition: filter 0.3s ease;
         }
 
         .board-tag {
