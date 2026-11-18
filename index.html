@@ -28,6 +28,7 @@
             --secondary-hover: #f8fafc;
             --success: #10b981;
             --success-bg: #f0fdf4;
+            --success-ring: rgba(16, 185, 129, 0.35);
             --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
             --shadow-lg: 0 10px 25px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
             --focus-ring: rgba(79, 70, 229, 0.15);
@@ -46,7 +47,8 @@
             --secondary: #1e293b; 
             --secondary-hover: #334155; 
             --success: #10b981; 
-            --success-bg: rgba(16, 185, 129, 0.1);
+            --success-bg: rgba(16, 185, 129, 0.12);
+            --success-ring: rgba(16, 185, 129, 0.4);
             --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
             --shadow-lg: 0 10px 25px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3);
             --focus-ring: rgba(99, 102, 241, 0.25);
@@ -146,7 +148,7 @@
             font-size: 14px;
             line-height: 1.6;
             outline: none;
-            transition: all 0.2s ease;
+            transition: all 0.25s ease;
             box-shadow: var(--shadow-sm);
         }
 
@@ -160,6 +162,10 @@
             border-color: var(--border-focus);
             box-shadow: 0 0 0 4px var(--focus-ring);
             background: var(--bg-card);
+        }
+
+        textarea.cleared-flash {
+            animation: inputClearSweep 0.65s ease-out;
         }
 
         #formattedOutput {
@@ -182,6 +188,50 @@
             background: var(--bg-input);
         }
 
+        #formattedOutput.copied-banner {
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: var(--success-bg);
+            border: 1px solid var(--success);
+            border-left: 4px solid var(--success);
+            color: var(--success);
+            box-shadow: 0 0 0 4px var(--success-ring);
+            animation: bannerFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .copied-banner-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--success);
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: badgeBounce 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .copied-banner-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .copied-banner-title {
+            font-weight: 700;
+            font-size: 15px;
+            letter-spacing: -0.01em;
+        }
+
+        .copied-banner-sub {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
         /* --- Buttons --- */
         .btn-group {
             display: flex;
@@ -191,7 +241,8 @@
         }
 
         .btn-clear, .btn-copy {
-            min-width: 180px; 
+            position: relative;
+            min-width: 185px; 
             padding: 22px 24px; 
             border-radius: 14px;
             cursor: pointer;
@@ -224,6 +275,7 @@
             color: var(--success);
             border-color: var(--success);
             background: var(--success-bg); 
+            animation: btnPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .btn-copy {
@@ -239,12 +291,82 @@
 
         .btn-copy.success {
             background: var(--success);
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+            box-shadow: 0 6px 18px rgba(16, 185, 129, 0.35);
+            animation: btnPop 0.42s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .btn-copy.success::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 14px;
+            border: 2px solid var(--success);
+            animation: ripplePulse 0.65s ease-out forwards;
+            pointer-events: none;
         }
 
         .btn-icon {
             width: 20px;
             height: 20px;
+            flex-shrink: 0;
+        }
+
+        .check-draw path {
+            stroke-dasharray: 24;
+            stroke-dashoffset: 24;
+            animation: drawCheck 0.35s ease-out 0.06s forwards;
+        }
+
+        /* --- Animations --- */
+        @keyframes btnPop {
+            0% { transform: scale(0.94); }
+            50% { transform: scale(1.04); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes ripplePulse {
+            0% {
+                transform: scale(1);
+                opacity: 0.75;
+            }
+            100% {
+                transform: scale(1.14, 1.28);
+                opacity: 0;
+            }
+        }
+
+        @keyframes drawCheck {
+            to { stroke-dashoffset: 0; }
+        }
+
+        @keyframes inputClearSweep {
+            0% {
+                border-color: var(--success);
+                background: var(--success-bg);
+                box-shadow: 0 0 0 4px var(--success-ring);
+            }
+            100% {
+                border-color: var(--border-light);
+                background: var(--bg-input);
+                box-shadow: var(--shadow-sm);
+            }
+        }
+
+        @keyframes bannerFadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(6px) scale(0.98);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes badgeBounce {
+            0% { transform: scale(0.4); opacity: 0; }
+            65% { transform: scale(1.12); opacity: 1; }
+            100% { transform: scale(1); }
         }
 
         /* --- Footer --- */
@@ -394,6 +516,24 @@
         const pasteBtn = document.getElementById('pasteBtn');
         const boardTag = document.getElementById('boardTag');
 
+        const DEFAULT_PASTE_HTML = `
+            <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+            Paste
+        `;
+
+        const DEFAULT_COPY_HTML = `
+            <svg class="btn-icon copy-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+            </svg>
+            Copy & Clear
+        `;
+
+        let pasteBtnTimeout = null;
+        let copyBtnTimeout = null;
+        let outputBannerTimeout = null;
+
         inputArea.addEventListener('input', processData);
 
         // Global Keyboard Shortcut (Cmd/Ctrl + Enter => Copy & Clear)
@@ -414,6 +554,9 @@
         }
 
         function processData() {
+            clearTimeout(outputBannerTimeout);
+            outputArea.classList.remove('copied-banner');
+
             const rawText = inputArea.value.trim();
             if (rawText === "") {
                 outputArea.innerText = "Awaiting load board data...";
@@ -574,17 +717,19 @@
                 inputArea.value = text;
                 processData();
 
-                const originalHtml = pasteBtn.innerHTML;
+                clearTimeout(pasteBtnTimeout);
+                pasteBtn.classList.remove('success');
+                void pasteBtn.offsetWidth;
                 pasteBtn.innerHTML = `
-                    <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <svg class="btn-icon check-draw" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
                     Pasted!
                 `;
                 pasteBtn.classList.add('success');
                 
-                setTimeout(() => { 
-                    pasteBtn.innerHTML = originalHtml;
+                pasteBtnTimeout = setTimeout(() => { 
+                    pasteBtn.innerHTML = DEFAULT_PASTE_HTML;
                     pasteBtn.classList.remove('success');
                 }, 1200);
             } catch (err) {
@@ -594,28 +739,55 @@
         }
 
         function copyAndClear() {
+            if (outputArea.classList.contains('empty') || outputArea.classList.contains('copied-banner')) return;
             const text = outputArea.innerText;
-            if (text === "Awaiting load board data...") return;
             
             navigator.clipboard.writeText(text).then(() => {
-                const originalHtml = copyBtn.innerHTML;
-                
+                clearTimeout(copyBtnTimeout);
+                clearTimeout(outputBannerTimeout);
+
+                // Animate Copy Button
+                copyBtn.classList.remove('success');
+                void copyBtn.offsetWidth;
                 copyBtn.innerHTML = `
-                    <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <svg class="btn-icon check-draw" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
                     Copied & Cleared!
                 `;
                 copyBtn.classList.add('success');
                 
+                // Clear input with visual green sweep
                 inputArea.value = '';
-                outputArea.innerText = 'Awaiting load board data...';
-                outputArea.classList.add('empty');
+                inputArea.classList.remove('cleared-flash');
+                void inputArea.offsetWidth;
+                inputArea.classList.add('cleared-flash');
                 boardTag.style.display = 'none';
                 inputArea.focus();
+
+                // Show sleek confirmation badge inside the output box
+                outputArea.classList.remove('empty');
+                outputArea.classList.add('copied-banner');
+                outputArea.innerHTML = `
+                    <div class="copied-banner-icon">
+                        <svg class="check-draw" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.75">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                    </div>
+                    <div class="copied-banner-title">Copied to Clipboard & Cleared</div>
+                    <div class="copied-banner-sub">Ready for next load</div>
+                `;
+
+                // Settle output box back to empty state
+                outputBannerTimeout = setTimeout(() => {
+                    outputArea.classList.remove('copied-banner');
+                    outputArea.classList.add('empty');
+                    outputArea.innerText = 'Awaiting load board data...';
+                }, 1150);
                 
-                setTimeout(() => { 
-                    copyBtn.innerHTML = originalHtml;
+                // Reset copy button
+                copyBtnTimeout = setTimeout(() => { 
+                    copyBtn.innerHTML = DEFAULT_COPY_HTML;
                     copyBtn.classList.remove('success');
                 }, 1500);
             });
